@@ -14,5 +14,12 @@ module SignExtension(in, out);
     output [31:0] out;
     
     /* Fill in the implementation here ... */
+    reg[31:0] out;
+    wire[15:0] in;
+    
+    always @(in)
+    begin
+        out[31:0] <= { {16{in[15]}}, in[15:0]};
+    end
 
 endmodule
