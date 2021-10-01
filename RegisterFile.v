@@ -49,7 +49,32 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 module RegisterFile(ReadRegister1, ReadRegister2, WriteRegister, WriteData, RegWrite, Clk, ReadData1, ReadData2);
-
-	/* Please fill in the implementation here... */
+	//Input declaration
+	input[4:0] ReadRegister1;
+	input[4:0] ReadRegister2;
+	input[4:0] WriteRegister;
+	input[31:0] WriteData;
+	input RegWrite;
+	input Clk;
+	output reg [31:0] ReadData1;
+	output reg [31:0] ReadData2;
+	
+	//Memory Declaraton
+	reg[31:0] Registers[31:0];
+	   
+	//Read Process
+	always @(*)
+	begin
+	   ReadData1 <= Registers[ReadRegister1];
+	   ReadData2 <= Registers[ReadRegister2];
+	end
+	
+	//Write process
+	always @(posedge Clk)
+	begin
+	   if (RegWrite) begin
+	       Registers[WriteRegister] <= WriteData;
+	   end
+	end
 
 endmodule
