@@ -20,7 +20,7 @@
 ///////////////////////2///////////////////////////////////////////////////////////
 
 
-module ALUControl(Op, funct, ALUOp);
+module ALUControl(ALUOp, funct, Op);
     input [5:0] Op;
     input [5:0] funct;                                      
     output  reg [3:0] ALUOp;
