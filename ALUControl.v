@@ -20,18 +20,19 @@
 ///////////////////////2///////////////////////////////////////////////////////////
 
 
-module ALUControl(ALUOp, funct, Op);
+module ALUControl(Opcode, funct, Op);
     input [5:0] Op;
     input [5:0] funct;                                      
     output  reg [3:0] ALUOp;
     always @(*) begin
-        if (Op == 0) begin //it's an r-type instruction. 
-            if (funct == 0) begin
-                ALUOp = 1; 
-            end 
-            else if (funct == 1)
-                ALUOp = 1; 
-            end 
+        case (Opcode):
+            case 000000: //it's an R-Type
+                case (func)://which R-type?
+                    case 100100: Op = 0000; //AND
+                    case 100100: Op = 0001; //OR
+                    endcase
+                
+        endcase 
     end 
     
 endmodule
