@@ -57,15 +57,32 @@ module ALUControl(Opcode, funct, Op);
                     case 000010: ALUOp = 1111 //multiply corresponds to mul
                     case 011000: ALUOp = 1111 //multiply corresponds to mult
                     case 011001: ALUOp = 1111 //multiply corresponds to multu
-                    endcase
-                case 011111: //it's a weird R-type instruction: either seh or sel 
-                  ALUOp = 0000 //both seh and sel correspond to and
-                endcase 
-                case 011100: //it's madd or sub
-                    ALUOp = 1111//multiply 
-                endcase 
-        //end case for all R-type instructions. 
-        endcase 
+                    case 001000: ALUOp = 0010 // add corresponds to jr
+                endcase //endcase for all R-TYPE instructions with opcode = 000000
+                
+                case 011111: ALUOp = 0000 //both seh and sel correspond to and
+                case 011100: ALUOp = 1111//multiply corresponds to madd and msub  
+               
+                //J-TYPE INSTRUCTIONS
+                case 000010: ALUOp = 0010 // add corresponds to jump
+                case 000011: ALUOp = 0010 // add corresponds to jal
+                
+                // I-TYPE INSTRUCTIONS
+                case 001100: ALUOp = 0000 //AND corresponds to andi
+                case 001101: ALUOp = 0001 //OR corresponds to ori
+                case 001110: ALUOp = 0011 //XOR corresponds to xori
+                case 001010: ALUOp = 0110 //sub corresponds to slti
+                case 001011: ALUOp = 0110 //sub corresponds to sltiu
+                case 001111: ALUOp = 0010 // add corresponds to lui
+                case 000001: ALUOp = 0110 //sub corresponds to bgez
+                case 000100: ALUOp = 0110 //sub corresponds to beq
+                case 000101: ALUOp = 0110 //sub corresponds to bne
+                case 000111: ALUOp = 0110 //sub corresponds to bgtz
+                case 000110: ALUOp = 0110 //sub corresponds to blez
+                case 000001: ALUOp = 0110 //sub corresponds to bltz
+                case 100001: ALUOp = 0010 // add corresponds to addiu
+                case 001000: ALUOp = 0010 // add corresponds to addi
+
     end 
     
 endmodule
