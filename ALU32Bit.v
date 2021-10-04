@@ -34,21 +34,23 @@ module ALU32Bit(ALUControl, A, B, ALUResult, Zero);
 
 	output reg [31:0] ALUResult;	// answer
 	output Zero;	    // Zero=1 if ALUResult == 0
+	integer i;
 
     /* Please fill in the implementation here... */
     assign Zero = (ALUResult==0); //zero is true if ALUResult is zero
     always @(ALUControl, A, B) begin
+        i <= B;
         case (ALUControl)
             0: ALUResult <= A & B; //and
             1: ALUResult <= A | B; //or
             2: ALUResult <= A + B; //add
-            3: ALUResult <= A; //xor FIXME
-            4: ALUResult <= A & B; //sll FIXME
-            5: ALUResult <= A & B; //srl FIXME
+            3: ALUResult <= A ^ B; //xor
+            4: ALUResult <= A << B; //sll
+            5: ALUResult <= A >> B; //srl
             6: ALUResult <= A - B; //subtract
             7: ALUResult <= A < B ? 1 : 0; //slt
-            8: ALUResult <= A & B; //rotate left FIXME
-            9: ALUResult <= A & B; //rotate right FIXME
+            8: ALUResult <= (A << B) | (A >> 32-B); //rotate left
+            9: ALUResult <= (A >> B) | (A << 32-B); //rotate right
             12: ALUResult <= ~(A | B); //nor
             14: ALUResult <= -1; //error ?FIXME?
             15: ALUResult <= A * B; //multiply
