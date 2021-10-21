@@ -46,7 +46,11 @@ module DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData);
     output reg[31:0] ReadData; // Contents of memory location at Address
 
     /* Please fill in the implementation here */
-    reg[31:0] memory[0:1023];
+    reg[31:0] memory[1023:0];
+
+    initial begin
+        $readmemh("C:/Users/econn/OneDrive/Documents/College/ECE369Mem/sum_of_array_dataMem.mem", memory);
+    end
     
     //read process
     always @(*)
