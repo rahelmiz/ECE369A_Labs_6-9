@@ -26,15 +26,17 @@
 //   operations needed to support. 
 ////////////////////////////////////////////////////////////////////////////////
 
-module ALU32Bit(ALUControl, A, B, ALUResult, Zero);
+module ALU32Bit(ALUControl, A, B, HiLo, ALUResult, Zero, ALU64Result);
 
-	input [3:0] ALUControl; // control bits for ALU operation
+	input [4:0] ALUControl; // control bits for ALU operation
                                 // you need to adjust the bitwidth as needed
 	input [31:0] A, B;	    // inputs
+	input [63:0] HiLo;      // Concatenated Hi and Lo registers used in MADD and 
 
 	output reg [31:0] ALUResult;	// answer
 	output Zero;	    // Zero=1 if ALUResult == 0
 	integer i;
+	output reg[63:0] ALU64Result;
 
     /* Please fill in the implementation here... */
     assign Zero = (ALUResult==0); //zero is true if ALUResult is zero
@@ -45,15 +47,37 @@ module ALU32Bit(ALUControl, A, B, ALUResult, Zero);
             1: ALUResult <= A | B; //or
             2: ALUResult <= A + B; //add
             3: ALUResult <= A ^ B; //xor FIXME
-            4: ALUResult <= A << B; //sll FIXME
-            5: ALUResult <= A >> B; //srl FIXME
+            4: ALUResult <= B << A; //sll FIXME
+            5: ALUResult <= B >> A; //srl FIXME
             6: ALUResult <= A - B; //subtract
-            7: ALUResult <= A < B ? 1 : 0; //slt
-            8: ALUResult <= (A << B) | (A >> 32-B); //rotate left FIXME
-            9: ALUResult <= (A >> B) | (A << 32-B); //rotate right FIXME
-            12: ALUResult <= ~(A | B); //nor
-            14: ALUResult <= -1; //error ?FIXME?
-            15: ALUResult <= A * B; //multiply
+            7: ALUResult <= ~(A | B); //nor
+            8: ALUResult <= (B << A) | (B >> 32-A); //rotate left FIXME
+            9: ALUResult <= (B >> A) | (B << 32-A); //rotate right FIXME
+            10: ALUResult <= (B >>> A); //Shift right arithmetic
+            11: ALUResult <= A > B ? 1 : 0; //sgt
+            12: ALUResult <= A < B ? 1 : 0; //slt
+            13: ALUResult <= B & 32'b00000000000000001111111111111111;
+            14: ALUResult <= B & 32'b00000000000000000000000011111111;
+            15: ALUResult <= $unsigned(A) < $unsigned(B) ? 1 : 0; //slt unsigned
+            16: ALUResult <= A; //Move A elsewhere
+            17: ALUResult <= B << 16; //Load upper immediate
+            
+            //16: ALUResult <= -1; //error ?FIXME?
+            26: ALU64Result <= $unsigned(A) * $unsigned(B); //Unsigned Mult MULTU
+            27: ALUResult <= HiLo[31:0]; //Move from Lo
+            28: ALUResult <= HiLo[63:32]; //Move from Hi
+            29: begin //MSUB
+                ALU64Result = A * B; //multiply
+                ALU64Result = HiLo - ALU64Result; //Test because can mess up
+                end
+            30: begin //MADD
+                ALU64Result = A * B; //multiply
+                ALU64Result = HiLo + ALU64Result; //Test because can mess up
+                end
+            31: begin
+                ALU64Result <= A * B; //multiply
+                ALUResult = ALU64Result[31:0]; //multiply 
+                end
             default: ALUResult <= 0;
         endcase
     end
