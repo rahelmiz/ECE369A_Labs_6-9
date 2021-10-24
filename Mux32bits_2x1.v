@@ -7,7 +7,7 @@
 // Description - Performs signal multiplexing between 2 32-Bit words.
 ////////////////////////////////////////////////////////////////////////////////
 
-module Mux32Bit2To1(out, inA, inB, sel);
+module Mux32Bits_2x1(out, inA, inB, sel);
 
     output reg [31:0] out;
     
