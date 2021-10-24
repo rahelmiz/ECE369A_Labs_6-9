@@ -40,11 +40,10 @@ module InstructionMemory(Address, Instruction);
 
     input [31:0] Address;        // Input Address 
     output reg [31:0] Instruction;    // Instruction at memory location Address
-    reg[31:0] memory[127:0]; //create a 128-word memory.
+    reg[31:0] memory[1023:0]; //create a 1024-word memory.
     //initialize memory 
-    integer i;
     initial begin
-        $readmemh("C:/Users/econn/OneDrive/Documents/College/ECE369Mem/sum_of_array_instructionMem.mem", memory); //replace link w whichever one u want to use, no spaces
+        $readmemh("C:/Users/econn/OneDrive/Documents/College/ECE369Mem/sum_of_array_instructionMem.mem", memory);
      end
      
      always @(Address)
