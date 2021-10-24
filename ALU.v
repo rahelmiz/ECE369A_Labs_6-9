@@ -61,7 +61,7 @@ module ALU32Bit(ALUControl, A, B, HiLo, ALUResult, Zero, ALU64Result);
             15: ALUResult <= $unsigned(A) < $unsigned(B) ? 1 : 0; //slt unsigned
             16: ALUResult <= A; //Move A elsewhere
             17: ALUResult <= B << 16; //Load upper immediate
-            
+            18: ALUResult <= A < 0 ? 1 : 0;
             //16: ALUResult <= -1; //error ?FIXME?
             26: ALU64Result <= $unsigned(A) * $unsigned(B); //Unsigned Mult MULTU
             27: ALUResult <= HiLo[31:0]; //Move from Lo
@@ -75,7 +75,7 @@ module ALU32Bit(ALUControl, A, B, HiLo, ALUResult, Zero, ALU64Result);
                 ALU64Result = HiLo + ALU64Result; //Test because can mess up
                 end
             31: begin
-                ALU64Result <= A * B; //multiply
+                ALU64Result <= $signed(A) * $signed(B); //multiply
                 ALUResult = ALU64Result[31:0]; //multiply 
                 end
             default: ALUResult <= 0;
