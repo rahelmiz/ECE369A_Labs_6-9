@@ -66,7 +66,7 @@ module DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData);
     end
     
     //write process
-    always @(posedge Clk)//, MemRead) //because reading of memory is not clocked?
+    always @(negedge Clk)//read at negative edge of the clock
     begin
         if(MemWrite == 1)
         begin
