@@ -1,20 +1,16 @@
 `timescale 1ns / 1ps
 
-////////////////////////////////////////////////////////////////////////////////
-// ECE369 - Computer Architecture
-// 
-// Module - Mux32Bit2To1.v
-// Description - Performs signal multiplexing between 2 32-Bit words.
-////////////////////////////////////////////////////////////////////////////////
-
-module Mux32Bits_2x1(out, inA, inB, sel);
-
-    output reg [31:0] out;
+module Mux32bits_2x1(signal, A, B, Out);
+    input signal;
+    input [31:0] A, B;
+    output reg [31:0] Out;
     
-    input [31:0] inA;
-    input [31:0] inB;
-    input sel;
-
-    /* Fill in the implementation here ... */ 
-
+    always @(*)
+    begin
+        case(signal)
+            1'd0: begin Out <= A; end
+            1'd1: begin Out <= B; end
+            default: begin Out <= 32'b0; end //error 
+        endcase
+    end
 endmodule
