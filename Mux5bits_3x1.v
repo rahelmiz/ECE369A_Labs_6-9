@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module mux5bits_3x1(signal, A, B, C, Out);
+module Mux5bits_3x1(signal, A, B, C, Out);
     input [4:0] A, B, C;
     input [1:0] signal;
     output reg [4:0] Out;
