@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 
-module mux5bits_3x1_tb(   );
+module Mux5bits_3x1_tb(   );
     reg [4:0] A, B, C;
     reg [1:0] signal;
     wire [4:0] Out;
     
-    mux5bits_3x1 muxTB(signal, A, B, C, Out);
+    Mux5bits_3x1 muxTB(signal, A, B, C, Out);
     
     initial
     begin
