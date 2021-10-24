@@ -42,11 +42,8 @@ module DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData);
     input Clk;
     input MemWrite; 		// Control signal for memory write 
     input MemRead; 			// Control signal for memory read 
-
     output reg[31:0] ReadData; // Contents of memory location at Address
-
-    /* Please fill in the implementation here */
-    reg[31:0] memory[1023:0];
+    reg[31:0] memory[1023:0]; //1024 memory slots
 
     initial begin
         $readmemh("C:/Users/econn/OneDrive/Documents/College/ECE369Mem/sum_of_array_dataMem.mem", memory);
