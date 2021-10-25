@@ -1,21 +1,6 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 10/25/2021 04:58:00 AM
-// Design Name: 
-// Module Name: Top_Level_1
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
+// Names: Ruben Fuentes (35%), Elizabeth Connacher (30%), Rahel Miz (35%)
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -54,9 +39,9 @@ module Top_Level_1(Clk, Rst);
     //Link Mux
     wire [31:0] WriteData_WB; //Write data from stage 5
     wire[31:0] PC4_WB; //PC + 4 from wb stage
-    wire link_WB; //Link signal from stage 5
+    wire Link_WB; //Link signal from stage 5
     wire [31:0] LinkOut; //Output from link mux into write data
-    Mux32bits_2x1 WriteDataMux(link_WB, WriteData_WB, PC4_DEC, LinkOut);
+    Mux32bits_2x1 WriteDataMux(Link_WB, WriteData_WB, PC4_DEC, LinkOut);
     
     //Call Register File
     wire RegWrite_WB; // RegWrite signal from write back stage
@@ -83,7 +68,7 @@ module Top_Level_1(Clk, Rst);
     
     //CONTROLLER Signal
     //1 bit signals
-    wire link_DEC, jrSrc_DEC, 
+    wire Link_DEC, jrSrc_DEC, 
          jump_DEC, branch_DEC, MemRead_DEC, 
          MemtoReg_DEC, MemWrite_DEC, ALUsrc1_DEC, 
          ALUsrc2_DEC, RegWrite_DEC,	
@@ -94,7 +79,7 @@ module Top_Level_1(Clk, Rst);
      wire[1:0] RegDst_DEC, byte2load_DEC, byte2Store_DEC;
         
     Controller ControllerModule(Instruction_DEC[31:26], Instruction_DEC[5:0], Instruction_DEC[16],
-                        RegDst_DEC,	link_DEC, jrSrc_DEC, 
+                        RegDst_DEC,	Link_DEC, jrSrc_DEC, 
                         jump_DEC, branch_DEC, MemRead_DEC, 
                         MemtoReg_DEC, MemWrite_DEC, ALUsrc1_DEC, 
                         ALUsrc2_DEC, RegWrite_DEC,	
@@ -223,36 +208,15 @@ module Top_Level_1(Clk, Rst);
     wire MemToReg_MEM, RegWrite_MEM, HiSrc_MEM, LoSrc_MEM, Link_MEM;
     wire [31:0] PC4_MEM;
     wire [63:0] ALU64Result_MEM;
-    //begin rahel's section
-     //STAGE 4 (MEM) PIPELINE
-    //Prepare
-    //Stage 4
-    wire [1:0] bytes2Load_MEM, bytes2Store_MEM;
-    wire MemRead_MEM, MemWrite_MEM;
+    wire [31:0] ReadData2_MEM;
     
-    //instantiations 
-    //control signals
-    wire [31:0] ALUResult_MEM;
-    wire [1:0] RegDst_MEM;
-    wire MemToReg_MEM, RegWrite_MEM, HiSrc_MEM, LoSrc_MEM, Link_MEM;
-    wire [31:0] PC4_MEM
-    wire [63:0] ALU64Result_MEM;
-    wire [1:0] bytes2Load_EX, bytes2Store_EX;
-    wire MemRead_EX, MemWrite_EX;
-    //data
-    wire [31:0] out_MEM, MemData_MEM, RegData_MEM;
-    // DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData); 
-    MaskStore ms_MEM(.MemAdr(ALUResult_MEM), .MemData(MemData_MEM), .Bytes2Load(bytes2Load_EX), .out(out_MEM));
-    DataMemory dm_MEM(.Address(ALUResult_MEM), .WriteData(out_MEM), .Clk(Clk), .MemWrite(MemWrite_EX), .MemRead(MemRead_EX), .ReadData(RegData_MEM)); 
-    //MaskLoad ml_MEM
-    
-    //end rahel's section
     EX_MEM_Reg Pipeline3(
     //Stage 4 Requirements (not used in subsequent stages)
     bytes2Load_EX, bytes2Store_EX,
     MemRead_EX, MemWrite_EX,
     bytes2Load_MEM, bytes2Store_MEM,
     MemRead_MEM, MemWrite_MEM,
+    ReadData2_EX, ReadData2_MEM,
     //Stage 4 + 5 (used in both)
     ALUResult_EX,
     ALUResult_MEM,
@@ -264,5 +228,34 @@ module Top_Level_1(Clk, Rst);
     //Clock
     Clk
     );
+    
+    //BEGIN Stage 4
+    
+    wire [31:0] StoreMaskOutput;
+    wire [31:0] MemReadData;
+    wire [31:0] LoadData_MEM;
+    
+    MaskStore StoreLogic(ALUResult_MEM, MemReadData, ReadData2_MEM , Bytes2Store_MEM, StoreMask_Output);
+    MaskLoad LoadLogic(ALUResult_MEM, MemReadData, Bytes2Load_MEM, LoadData_MEM);
+    DataMemory MemoryUnit(ALUResult_MEM, StoreMaskOutput, Clk, MemWrite_MEM, MemRead_MEM, MemReadData);
+    
+    //PIPELINE Stage 4-5
+    wire [31:0] ALUResult_WB, LoadData_WB;
+    wire MemToReg_WB;
+    
+    //Declare
+    MEM_WB_Reg Pipeline4(
+    MemToReg_MEM, LoadData_MEM, ALUResult_MEM, RegWrite_MEM,
+    ALU64Result_MEM,HiSrc_MEM,LoSrc_MEM,Link_MEM,RegDst_MEM, PC4_MEM,
+    MemToReg_WB, LoadData_WB, ALUResult_WB, RegWrite_WB,
+    ALU64Result_WB,HiSrc_WB,LoSrc_WB,Link_WB,RegDst_WB, PC4_WB,
+    //Clock
+    Clk
+    );
+    
+    Mux32bits_2x1 WriteMux(MemToReg_WB, ALUResult_MEM, LoadData_MEM, WriteData_WB);
+    
+    
+    
     
 endmodule

@@ -43,12 +43,12 @@ module InstructionMemory(Address, Instruction);
     reg[31:0] memory[1023:0]; //create a 1024-word memory.
     //initialize memory 
     initial begin
-        $readmemh("C:/Users/econn/OneDrive/Documents/College/ECE369Mem/sum_of_array_instructionMem.mem", memory);
+        $readmemh("C:/Users/ruben/Documents/ECE369TestCases/sum_of_array_instructionMem.mem", memory);
      end
      
      always @(Address)
      begin
-        Instruction = memory[Address[8:2]];
+        Instruction = memory[Address[11:2]];
      end 
     
 endmodule

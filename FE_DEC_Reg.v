@@ -30,6 +30,11 @@ module FE_DEC_Reg(
     output reg [31:0] InstructionOut, PC4Out;
     //Memory Allocation
     reg [31:0] Instruction, PC4;
+    //
+    initial begin
+    Instruction <= 0;
+    PC4 <= 0;
+    end
     //Write operations
     always @(posedge Clk) begin
     Instruction <= InstructionIn;

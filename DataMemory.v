@@ -46,7 +46,7 @@ module DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData);
     reg[31:0] memory[1023:0]; //1024 memory slots
 
     initial begin
-        $readmemh("C:/Users/econn/OneDrive/Documents/College/ECE369Mem/sum_of_array_dataMem.mem", memory);
+        $readmemh("C:/Users/ruben/Documents/ECE369TestCases/sum_of_array_dataMem.mem", memory);
     end
     
     //read process

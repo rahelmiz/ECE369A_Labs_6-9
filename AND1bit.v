@@ -18,3 +18,4 @@ module AND1bit(A, B, Out);
             Out <= 0; //error
     end
 endmodule
+

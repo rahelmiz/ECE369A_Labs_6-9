@@ -44,6 +44,21 @@ module MEM_WB_Reg(
     reg[63:0] ALU64Result;
     reg MemToReg,RegWrite,HiSrc,LoSrc,Link;
     reg [1:0] RegDst;
+    
+    //Initial state with noops
+    initial begin
+    LoadData <= 0; //Comes from stage 4
+    ALUResult <= 0; //Comes from stage 3, goes thru 4
+    PC4 <= 0; //Comes from stage 2, goes thru 3 and 4
+    ALU64Result <= 0; //Comes from stage 3, goes thru 4
+    MemToReg <= 0; //Comes from stage 2, goes thru 3 and 4
+    RegWrite <= 0; //Comes from stage 2, goes thru 3 and 4
+    HiSrc <= 0; //Comes from stage 2, goes thru 3 and 4
+    LoSrc <= 0; //Comes from stage 2, goes thru 3 and 4
+    Link <= 0; //Comes from stage 2, goes thru 3 and 4
+    RegDst <= 0; //Comes from stage 2, goes thru 3 and 4
+    
+    end
     //Write declarations
     always @(posedge Clk) begin
     LoadData <= LoadDataIn; //Comes from stage 4

@@ -26,12 +26,12 @@ module DEC_EX_Reg(
     HiLoIn,
     ALUSrc1In, ALUSrc2In,MoveSrcIn,ZeroSrcIn,JrSrcIn,
     MoveIn,BranchIn,
-    ALUOpIn,
+    ALUOpIn, JumpIn,
     ShamtOut,ReadData1Out,ReadData2Out,ImmediateOut,JAddressOut,
     HiLoOut,
     ALUSrc1Out, ALUSrc2Out,MoveSrcOut,ZeroSrcOut,JrSrcOut,
     MoveOut,BranchOut,
-    ALUOpOut,
+    ALUOpOut,JumpOut,
     //Stage 3 + 5
     PC4In,
     PC4Out,
@@ -56,19 +56,19 @@ module DEC_EX_Reg(
     //inputs
     input[31:0] ShamtIn,ReadData1In,ReadData2In,ImmediateIn,JAddressIn;
     input [63:0] HiLoIn;
-    input ALUSrc1In, ALUSrc2In,MoveSrcIn,ZeroSrcIn,JrSrcIn;
+    input ALUSrc1In, ALUSrc2In,MoveSrcIn,ZeroSrcIn,JrSrcIn, JumpIn;
     input MoveIn,BranchIn;
     input [4:0] ALUOpIn;
     //outputs
     output reg [31:0] ShamtOut,ReadData1Out,ReadData2Out,ImmediateOut,JAddressOut;
     output reg [63:0] HiLoOut;
-    output reg ALUSrc1Out, ALUSrc2Out,MoveSrcOut,ZeroSrcOut,JrSrcOut;
+    output reg ALUSrc1Out, ALUSrc2Out,MoveSrcOut,ZeroSrcOut,JrSrcOut, JumpOut;
     output reg MoveOut,BranchOut;
     output reg [4:0] ALUOpOut;
     //Memory declarations
     reg [31:0] Shamt,ReadData1,ReadData2,Immediate,JAddress;
     reg [63:0] HiLo;
-    reg ALUSrc1, ALUSrc2,MoveSrc,ZeroSrc,JrSrc;
+    reg ALUSrc1, ALUSrc2,MoveSrc,ZeroSrc,JrSrc, Jump;
     reg Move,Branch;
     reg [4:0] ALUOp;
     
@@ -103,6 +103,39 @@ module DEC_EX_Reg(
     reg MemToReg,HiSrc,LoSrc,Link;
     reg [1:0] RegDst;
     
+    //Initial state with NOOps
+    initial begin
+    Shamt <= 0; //Comes from stage 2
+    ReadData1 <= 0; //Comes from stage 2
+    ReadData2 <= 0; //Comes from stage 2
+    Immediate <= 0; //Comes from stage 2
+    JAddress <= 0; //Comes from stage 2
+    HiLo <= 0; //Comes from stage 2
+    ALUSrc1 <= 0; //Comes from stage 2
+    ALUSrc2 <= 0; //Comes from stage 2
+    MoveSrc <= 0; //Comes from stage 2
+    ZeroSrc <= 0; //Comes from stage 2
+    JrSrc <= 0; //Comes from stage 2
+    Move <= 0; //Comes from stage 2
+    Branch <= 0; //Comes from stage 2
+    Jump <= 0;
+    ALUOp <= 0; //Comes from stage 2
+    //STAGE 3 + 5
+    PC4 <= 0; //Comes from stage 1
+    RegWrite <= 0; //Comes from stage 2
+    //STAGE 4
+    bytes2Load <= 0; //Comes from stage 2, goes through 3
+    bytes2Store <= 0; //Comes from stage 2, goes through 3
+    MemRead <= 0; //Comes from stage 2, goes through 3
+    MemWrite <= 0; //Comes from stage 2, goes through 3
+    //STAGE 5
+    MemToReg <= 0; //Comes from stage 2, goes thru 3 and 4
+    HiSrc <= 0; //Comes from stage 2, goes thru 3 and 4
+    LoSrc <= 0; //Comes from stage 2, goes thru 3 and 4
+    Link <= 0; //Comes from stage 2, goes thru 3 and 4
+    RegDst <= 0; //Comes from stage 2, goes thru 3 and 4
+    end
+    
     
     //Write declarations
     always @(posedge Clk) begin
@@ -120,6 +153,7 @@ module DEC_EX_Reg(
     JrSrc <= JrSrcIn; //Comes from stage 2
     Move <= MoveIn; //Comes from stage 2
     Branch <= BranchIn; //Comes from stage 2
+    Jump <= JumpIn;
     ALUOp <= ALUOpIn; //Comes from stage 2
     //STAGE 3 + 5
     PC4 <= PC4In; //Comes from stage 1
@@ -153,6 +187,7 @@ module DEC_EX_Reg(
     JrSrcOut <= JrSrc; //Chooses whether to store regular value or $rs into PC
     MoveOut <= Move; //Activates move operations
     BranchOut <= Branch; //Activates branch operations
+    JumpOut <= Jump;
     ALUOpOut <= ALUOp; //Input ALU operation
     //STAGE 3 + 5
     PC4Out <= PC4; //Computes new Pc Address AND may be used for jal

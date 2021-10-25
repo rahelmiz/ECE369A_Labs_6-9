@@ -26,6 +26,7 @@ module EX_MEM_Reg(
     MemReadIn, MemWriteIn,
     bytes2LoadOut, bytes2StoreOut,
     MemReadOut, MemWriteOut,
+    MemWriteDataIn,MemWriteDataOut,
     //Stage 4 + 5 (used in both)
     ALUResultIn,
     ALUResultOut,
@@ -43,12 +44,15 @@ module EX_MEM_Reg(
     //Inputs
     input[1:0] bytes2LoadIn, bytes2StoreIn;
     input MemReadIn, MemWriteIn;
+    input[31:0] MemWriteDataIn;
     //Ouputs
     output reg[1:0] bytes2LoadOut, bytes2StoreOut;
     output reg MemReadOut, MemWriteOut;
+    output[31:0] MemWriteDataOut;
     //Memory
     reg[1:0] bytes2Load, bytes2Store;
     reg MemRead, MemWrite;
+    reg[31:0] MemWriteData;
     
     //STAGE 4 + 5
     input[31:0] ALUResultIn;
@@ -72,6 +76,26 @@ module EX_MEM_Reg(
     reg[63:0] ALU64Result;
     reg MemToReg,RegWrite,HiSrc,LoSrc,Link;
     reg [1:0] RegDst;
+    
+    //Initial state with noops
+    initial begin
+    //STAGE 4
+    bytes2Load <= 0; //Comes from stage 2, goes through 3
+    bytes2Store <= 0; //Comes from stage 2, goes through 3
+    MemRead <= 0; //Comes from stage 2, goes through 3
+    MemWrite <= 0; //Comes from stage 2, goes through 3
+    //STAGE 4 + 5
+    ALUResult <= 0; //Comes from stage 3, goes thru 4
+    //STAGE 5
+    PC4 <= 0; //Comes from stage 2, goes thru 3 and 4
+    ALU64Result <= 0; //Comes from stage 3, goes thru 4
+    MemToReg <= 0; //Comes from stage 2, goes thru 3 and 4
+    RegWrite <= 0; //Comes from stage 2, goes thru 3 and 4
+    HiSrc <= 0; //Comes from stage 2, goes thru 3 and 4
+    LoSrc <= 0; //Comes from stage 2, goes thru 3 and 4
+    Link <= 0; //Comes from stage 2, goes thru 3 and 4
+    RegDst <= 0; //Comes from stage 2, goes thru 3 and 4
+    end
     
     
     //Write declarations
