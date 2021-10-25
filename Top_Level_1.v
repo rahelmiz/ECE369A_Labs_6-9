@@ -223,7 +223,30 @@ module Top_Level_1(Clk, Rst);
     wire MemToReg_MEM, RegWrite_MEM, HiSrc_MEM, LoSrc_MEM, Link_MEM;
     wire [31:0] PC4_MEM;
     wire [63:0] ALU64Result_MEM;
+    //begin rahel's section
+     //STAGE 4 (MEM) PIPELINE
+    //Prepare
+    //Stage 4
+    wire [1:0] bytes2Load_MEM, bytes2Store_MEM;
+    wire MemRead_MEM, MemWrite_MEM;
     
+    //instantiations 
+    //control signals
+    wire [31:0] ALUResult_MEM;
+    wire [1:0] RegDst_MEM;
+    wire MemToReg_MEM, RegWrite_MEM, HiSrc_MEM, LoSrc_MEM, Link_MEM;
+    wire [31:0] PC4_MEM
+    wire [63:0] ALU64Result_MEM;
+    wire [1:0] bytes2Load_EX, bytes2Store_EX;
+    wire MemRead_EX, MemWrite_EX;
+    //data
+    wire [31:0] out_MEM, MemData_MEM, RegData_MEM;
+    // DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData); 
+    MaskStore ms_MEM(.MemAdr(ALUResult_MEM), .MemData(MemData_MEM), .Bytes2Load(bytes2Load_EX), .out(out_MEM));
+    DataMemory dm_MEM(.Address(ALUResult_MEM), .WriteData(out_MEM), .Clk(Clk), .MemWrite(MemWrite_EX), .MemRead(MemRead_EX), .ReadData(RegData_MEM)); 
+    MaskLoad ml_MEM
+    
+    //end rahel's section
     EX_MEM_Reg Pipeline3(
     //Stage 4 Requirements (not used in subsequent stages)
     bytes2Load_EX, bytes2Store_EX,
