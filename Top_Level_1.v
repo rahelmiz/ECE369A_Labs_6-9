@@ -244,7 +244,7 @@ module Top_Level_1(Clk, Rst);
     // DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData); 
     MaskStore ms_MEM(.MemAdr(ALUResult_MEM), .MemData(MemData_MEM), .Bytes2Load(bytes2Load_EX), .out(out_MEM));
     DataMemory dm_MEM(.Address(ALUResult_MEM), .WriteData(out_MEM), .Clk(Clk), .MemWrite(MemWrite_EX), .MemRead(MemRead_EX), .ReadData(RegData_MEM)); 
-    MaskLoad ml_MEM
+    //MaskLoad ml_MEM
     
     //end rahel's section
     EX_MEM_Reg Pipeline3(
