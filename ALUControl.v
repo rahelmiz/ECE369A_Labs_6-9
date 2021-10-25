@@ -17,7 +17,7 @@ module ALUControl(Opcode, funct, I21,I6, I16, ALUOp);
         
      else if (Opcode == 6'b0) begin //it's a rotate or shift
         if (funct == 6'd6) begin
-             case (I21)
+             case (I6)
                 1'b0: ALUOp = 5'd5; //srlv
                 1'b1: ALUOp = 5'd9; //rotrv
              endcase
