@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 10/03/2021 07:14:57 PM
+// Create Date: 10/24/2021 03:51:56 PM
 // Design Name: 
 // Module Name: ALUControl_tb
 // Project Name: 
@@ -21,40 +21,43 @@
 
 
 module ALUControl_tb();
-reg [5:0] Opcode_tb;
-reg [5:0] funct_tb;
-wire [3:0] ALUOp_tb;
-ALUControl ac(.Opcode(Opcode_tb), .funct(funct_tb), .ALUOp(ALUOp_tb));
-
+reg [5:0] Opcode, funct;
+reg I21, I6, I16; 
+wire [4:0] ALUOp;
+integer f; 
+reg [4:0] c;
+ALUControl aluc(Opcode, funct, I21,I6, I16, ALUOp);
 initial begin
-//test when opcode = 00000
- //  @(posedge Clk)
-    Opcode_tb = 6'b0; 
-    funct_tb = 6'b100011;
-    if (ALUOp_tb != 4'b0010)begin
-        $display("expected 0010 \n got: %4b", ALUOp_tb);
-    end
-    #5
+    f = $fopen("ALUControl_tb.txt", "w+");
+    $fwrite("BGEZ "); 
+    I16 = 1'b1;  Opcode = 6'd1; c = 5'd18;
+    if (ALUOp != c) begin //test bgtz
+        $fwrite("got ALUOp = %2d\nexpected %2d", ALUOp,  c); end #5;
+   
+    I16 = 1'b0; c= 5'd12; 
+    if (ALUOp != c) begin 
+        $fwrite("got ALUOp = %2d\nexpected %2d", ALUOp,  c); end #5;
+        
     
- //   @(posedge Clk)
-    funct_tb = 6'b101000;
-    if (ALUOp_tb != 4'b0010 )begin
-        $display("expected 0010 \n got: %4b", ALUOp_tb);
-    end
-    #5
-    //ITYPE TESTS
- //   @(posedge Clk)
-    Opcode_tb = 6'b001100; funct_tb = 6'b0;
-    if (ALUOp_tb != 4'b0000 ) begin
-       $display("expected 0000 \n got: %4b", ALUOp_tb);
-    end
-    #5
+    Opcode = 6'd12; c = 6'd0; //test andi 
+    if (ALUOp != c) begin 
+        $fwrite("got ALUOp = %2d\nexpected %2d", ALUOp,  c); end #5;
     
-  //  @(posedge Clk)
-    Opcode_tb = 6'b000101; funct_tb = 6'b0;
-    if (ALUOp_tb != 4'b0110  ) begin
-        $display("expected 0110 \n got: %4b", ALUOp_tb);
-    end
+    Opcode = 6'd0; funct = 6'd17; c = 5'd2; //test mthi
+    if (ALUOp != c) begin 
+        $fwrite("got ALUOp = %2d\nexpected %2d", ALUOp,  c); end #5;
     
- end 
+    Opcode = 6'd28; funct = 6'd2; c = 5'd31; //test madd
+    if (ALUOp != c) begin 
+        $fwrite("got ALUOp = %2d\nexpected %2d", ALUOp,  c); end #5;
+    
+    Opcode = 6'b0; funct = 6'd2; I6 = 1'b1; c = 5'd9; //test rotr
+      if (ALUOp != c) begin 
+        $fwrite("got ALUOp = %2d\nexpected %2d", ALUOp,  c); end #5;
+        
+    Opcode = 6'b0; funct = 6'd6; I6 = 1'b0; c = 5'd5; //test srlv
+      if (ALUOp != c) begin 
+        $fwrite("got ALUOp = %2d\nexpected %2d", ALUOp,  c); end #5;
+    $fclose(f);
+end
 endmodule
