@@ -15,7 +15,7 @@ module Top_Level_1(Clk, Rst);
     //Instruction memory
     wire[31:0] PCInput; //Input to PC, will reuse in stage 3
     wire[31:0] PC4_IF; //Will contain the value of PC + 4 Adder
-    wire[31:0] PCResult; //Output of PC
+    (* mark_debug = "true" *) wire[31:0] PCResult; //Output of PC
     wire[31:0] Instruction_IF; //Instruction from first stage
     //ProgramCounter
     ProgramCounter PCounter(.Address(PCInput), .PCResult(PCResult), .Reset(Rst), .Clk(Clk));
@@ -46,7 +46,7 @@ module Top_Level_1(Clk, Rst);
     //Call Register File
     wire RegWrite_WB; // RegWrite signal from write back stage
     wire [31:0] ReadData1_DEC, ReadData2_DEC;
-    RegisterFile Registers(Instruction_DEC[25:21], Instruction_DEC[20:16], RegDstOut, LinkOut, RegWrite_WB, 
+    (* mark_debug = "true" *) RegisterFile Registers(Instruction_DEC[25:21], Instruction_DEC[20:16], RegDstOut, LinkOut, RegWrite_WB, 
                           Clk, ReadData1_DEC, ReadData2_DEC); 
                           
     //HILO REGISTER STUFF
@@ -60,32 +60,32 @@ module Top_Level_1(Clk, Rst);
     wire [31:0] Hi_DEC;
     wire [31:0] Lo_DEC;
     //HiSrc
-    Mux32bits_2x1 HiSrcMux(HiSrc_WB, Write_Data_WB, ALU64Result_WB[63:32], HiIn);
+    Mux32bits_2x1 HiSrcMux(HiSrc_WB, WriteData_WB, ALU64Result_WB[63:32], HiIn);
     //LoSrc
-    Mux32bits_2x1 LoSrcMux(LoSrc_WB, Write_Data_WB, ALU64Result_WB[31:0], LoIn);
+    Mux32bits_2x1 LoSrcMux(LoSrc_WB, WriteData_WB, ALU64Result_WB[31:0], LoIn);
     //Instantiate HiLoRegister
     HiLoRegisters HiLoRegister(HiIn, LoIn, HiWrite_WB, LoWrite_WB, Clk, Hi_DEC, Lo_DEC);
     
     //CONTROLLER Signal
     //1 bit signals
-    wire Link_DEC, jrSrc_DEC, 
-         jump_DEC, branch_DEC, MemRead_DEC, 
-         MemtoReg_DEC, MemWrite_DEC, ALUsrc1_DEC, 
-         ALUsrc2_DEC, RegWrite_DEC,	
+    wire Link_DEC, JrSrc_DEC, 
+         Jump_DEC, branch_DEC, MemRead_DEC, 
+         MemToReg_DEC, MemWrite_DEC, ALUSrc1_DEC, 
+         ALUSrc2_DEC, RegWrite_DEC,	
          HiWrite_DEC, LoWrite_DEC, HiSrc_DEC,
          LoSrc_DEC,	ZeroSrc_DEC, Move_DEC,	
          MoveSrc_DEC;
      //Two bit signals
-     wire[1:0] RegDst_DEC, byte2load_DEC, byte2Store_DEC;
+     wire[1:0] RegDst_DEC, bytes2Load_DEC, bytes2Store_DEC;
         
     Controller ControllerModule(Instruction_DEC[31:26], Instruction_DEC[5:0], Instruction_DEC[16],
-                        RegDst_DEC,	Link_DEC, jrSrc_DEC, 
-                        jump_DEC, branch_DEC, MemRead_DEC, 
-                        MemtoReg_DEC, MemWrite_DEC, ALUsrc1_DEC, 
-                        ALUsrc2_DEC, RegWrite_DEC,	
+                        RegDst_DEC,	Link_DEC, JrSrc_DEC, 
+                        Jump_DEC, branch_DEC, MemRead_DEC, 
+                        MemToReg_DEC, MemWrite_DEC, ALUSrc1_DEC, 
+                        ALUSrc2_DEC, RegWrite_DEC,	
                         HiWrite_DEC, LoWrite_DEC, HiSrc_DEC,
                         LoSrc_DEC,	ZeroSrc_DEC, Move_DEC,	
-                        MoveSrc_DEC, bytes2load_DEC, bytes2store_DEC
+                        MoveSrc_DEC, bytes2Load_DEC, bytes2store_DEC
                         );
     //ALU Control
     wire [4:0] ALUOp_DEC; //ALU Op in decode stage
@@ -98,7 +98,7 @@ module Top_Level_1(Clk, Rst);
     
     //Jump Address Calculation
     wire [27:0] shifted_Jump; //Used to calculate jump address, will be combined with PC4 later
-    TwoShift28Bit({2'b00, Instruction_DEC[25:0]}, shifted_Jump);
+    TwoShift28Bit JumpShift({2'b00, Instruction_DEC[25:0]}, shifted_Jump);
     
     //DECODE-EXECUTE PIPELINE
     //Stage 3 wires
@@ -119,18 +119,19 @@ module Top_Level_1(Clk, Rst);
     wire Jump_EX;
     
     
+    
     DEC_EX_Reg Pipeline2(
     //Stage 3 Requirements (not used in subsequent stages)
     {27'b0,Instruction_DEC[10:6]},ReadData1_DEC,ReadData2_DEC,Immediate_DEC,{PC4_DEC[31:28], shifted_Jump},
     {Hi_DEC, Lo_DEC},
-    ALUSrc1_DEC, ALUSrc2_DEC,MoveSrc_DEC,ZeroSrc_DEC,JrSrc_DEC, Jump_DEC,
-    Move_DEC,Branch_DEC,
-    ALUOp_DEC,
+    ALUSrc1_DEC, ALUSrc2_DEC,MoveSrc_DEC,ZeroSrc_DEC,JrSrc_DEC,
+    Move_DEC,branch_DEC,
+    ALUOp_DEC, Jump_DEC,
     Shamt_EX,ReadData1_EX,ReadData2_EX,Immediate_EX,JAddress_EX,
     HiLo_EX,
-    ALUSrc1_EX, ALUSrc2_EX,MoveSrc_EX,ZeroSrc_EX,JrSrc_EX, Jump_EX,
+    ALUSrc1_EX, ALUSrc2_EX,MoveSrc_EX,ZeroSrc_EX,JrSrc_EX,
     Move_EX,Branch_EX,
-    ALUOp_EX,
+    ALUOp_EX,Jump_EX,
     //Stage 3 + 5
     PC4_DEC,
     PC4_EX,
@@ -186,7 +187,7 @@ module Top_Level_1(Clk, Rst);
     //Set up branch address
     //Shift Immediate by two
     wire [31:0] ShiftedImmediate;
-    TwoShift32Bit(Immediate_EX, ShiftedImmediate); 
+    TwoShift32Bit ImmediateShift(Immediate_EX, ShiftedImmediate); 
     //ADD ALU
     wire [31:0] branchAddress;
     ALU32Bit BranchADD(4'd2, PC4_EX, ShiftedImmediate, 64'b0, branchAddress, dummy, dummy2);
@@ -195,7 +196,7 @@ module Top_Level_1(Clk, Rst);
     Mux32bits_2x1 BranchMux(branchANDOut, PC4_IF, branchAddress, branchOutput);
     wire [31:0] JumpOutput;
     Mux32bits_2x1 JumpMux(Jump_EX, branchOutput, JAddress_EX, JumpOutput); 
-    Mux32bits_2x1 JrMux(JrSrc_EX, JumpOutput, ReadData1_EX, PCResult); //Connect back to our PC
+    Mux32bits_2x1 JrMux(JrSrc_EX, JumpOutput, ReadData1_EX, PCInput); //Connect back to our PC
     
     //STAGE 4 PIPELINE
     //Prepare
@@ -235,8 +236,8 @@ module Top_Level_1(Clk, Rst);
     wire [31:0] MemReadData;
     wire [31:0] LoadData_MEM;
     
-    MaskStore StoreLogic(ALUResult_MEM, MemReadData, ReadData2_MEM , Bytes2Store_MEM, StoreMask_Output);
-    MaskLoad LoadLogic(ALUResult_MEM, MemReadData, Bytes2Load_MEM, LoadData_MEM);
+    MaskStore StoreLogic(ALUResult_MEM, MemReadData, ReadData2_MEM , bytes2Store_MEM, StoreMaskOutput);
+    MaskLoad LoadLogic(ALUResult_MEM, MemReadData, bytes2Load_MEM, LoadData_MEM);
     DataMemory MemoryUnit(ALUResult_MEM, StoreMaskOutput, Clk, MemWrite_MEM, MemRead_MEM, MemReadData);
     
     //PIPELINE Stage 4-5
