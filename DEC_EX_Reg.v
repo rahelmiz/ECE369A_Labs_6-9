@@ -47,6 +47,8 @@ module DEC_EX_Reg(
     HiSrcIn,LoSrcIn,LinkIn,RegDstIn,
     MemToRegOut,
     HiSrcOut,LoSrcOut,LinkOut,RegDstOut,
+    HiWriteIn, LoWriteIn,
+    HiWriteOut, LoWriteOut,
     //Clock
     Clk
     );
@@ -96,12 +98,15 @@ module DEC_EX_Reg(
     input MemToRegIn,HiSrcIn,LoSrcIn,LinkIn;
     input [4:0] RegDstIn;
     input Clk;
+    input HiWriteIn, LoWriteIn;
     //Outputs
     output reg MemToRegOut,HiSrcOut,LoSrcOut,LinkOut;
     output reg [4:0] RegDstOut;
+    output reg HiWriteOut, LoWriteOut;
     //Memory declarations
     reg MemToReg,HiSrc,LoSrc,Link;
     reg [4:0] RegDst;
+    reg HiWrite, LoWrite;
     
     //Initial state with NOOps
     initial begin
@@ -134,6 +139,8 @@ module DEC_EX_Reg(
     LoSrc <= 0; //Comes from stage 2, goes thru 3 and 4
     Link <= 0; //Comes from stage 2, goes thru 3 and 4
     RegDst <= 0; //Comes from stage 2, goes thru 3 and 4
+    HiWrite <= 0;
+    LoWrite <= 0;
     end
     
     
@@ -169,6 +176,8 @@ module DEC_EX_Reg(
     LoSrc <= LoSrcIn; //Comes from stage 2, goes thru 3 and 4
     Link <= LinkIn; //Comes from stage 2, goes thru 3 and 4
     RegDst <= RegDstIn; //Comes from stage 2, goes thru 3 and 4
+    HiWrite <= HiWriteIn;
+    LoWrite <= LoWriteIn;
     end
     
     //Read declarations
@@ -203,6 +212,8 @@ module DEC_EX_Reg(
     LoSrcOut <= LoSrc; //Chooses source for lo input between ALU64Result and ALUResult
     LinkOut <= Link; //Chooses write data between ALU64Result and PC + 4
     RegDstOut <= RegDst; //Chooses register to store results in
+    HiWriteOut <= HiWrite;
+    LoWriteOut <= LoWrite;
     
     end
 endmodule

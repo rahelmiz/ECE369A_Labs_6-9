@@ -35,6 +35,8 @@ module EX_MEM_Reg(
     ALU64ResultIn,HiSrcIn,LoSrcIn,LinkIn,RegDstIn, PC4In,
     MemToRegOut, RegWriteOut,
     ALU64ResultOut,HiSrcOut,LoSrcOut,LinkOut,RegDstOut, PC4Out,
+    HiWriteIn, LoWriteIn,
+    HiWriteOut, LoWriteOut,
     //Clock
     Clk
     );
@@ -66,16 +68,19 @@ module EX_MEM_Reg(
     input MemToRegIn,RegWriteIn,HiSrcIn,LoSrcIn,LinkIn;
     input [4:0] RegDstIn;
     input Clk;
+    input HiWriteIn, LoWriteIn;
     //Outputs
     output reg[31:0] PC4Out;
     output reg [63:0] ALU64ResultOut;
     output reg MemToRegOut,RegWriteOut,HiSrcOut,LoSrcOut,LinkOut;
     output reg [4:0] RegDstOut;
+    output reg HiWriteOut, LoWriteOut;
     //Memory declarations
     reg[31:0] LoadData, PC4;
     reg[63:0] ALU64Result;
     reg MemToReg,RegWrite,HiSrc,LoSrc,Link;
     reg [4:0] RegDst;
+    reg HiWrite, LoWrite;
     
     //Initial state with noops
     initial begin
@@ -96,6 +101,8 @@ module EX_MEM_Reg(
     LoSrc <= 0; //Comes from stage 2, goes thru 3 and 4
     Link <= 0; //Comes from stage 2, goes thru 3 and 4
     RegDst <= 0; //Comes from stage 2, goes thru 3 and 4
+    HiWrite <= 0;
+    LoWrite <= 0;
     end
     
     
@@ -118,6 +125,8 @@ module EX_MEM_Reg(
     LoSrc <= LoSrcIn; //Comes from stage 2, goes thru 3 and 4
     Link <= LinkIn; //Comes from stage 2, goes thru 3 and 4
     RegDst <= RegDstIn; //Comes from stage 2, goes thru 3 and 4
+    HiWrite <= HiWriteIn;
+    LoWrite <= LoWriteIn;
     end
     
     //Read declarations
@@ -139,6 +148,8 @@ module EX_MEM_Reg(
     LoSrcOut <= LoSrc; //Chooses source for lo input between ALU64Result and ALUResult
     LinkOut <= Link; //Chooses write data between ALU64Result and PC + 4
     RegDstOut <= RegDst; //Chooses register to store results in
+    HiWriteOut <= HiWrite;
+    LoWriteOut <= LoWrite;
     
     end
 endmodule

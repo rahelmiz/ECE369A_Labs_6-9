@@ -119,6 +119,7 @@ module Top_Level_1(Clk, Rst);
     wire MemToReg_EX, HiSrc_EX,LoSrc_EX,Link_EX;
     wire[4:0] RegDst_EX;
     wire Jump_EX;
+    wire HiWrite_EX, LoWrite_EX;
     
     
     DEC_EX_Reg Pipeline2(
@@ -148,6 +149,8 @@ module Top_Level_1(Clk, Rst);
     HiSrc_DEC,LoSrc_DEC,Link_DEC,RegDstOut,
     MemToReg_EX,
     HiSrc_EX,LoSrc_EX,Link_EX,RegDst_EX,
+    HiWrite_DEC, LoWrite_DEC,
+    HiWrite_EX, LoWrite_EX,
     //Clock
     Clk
     );
@@ -211,6 +214,7 @@ module Top_Level_1(Clk, Rst);
     wire [31:0] PC4_MEM;
     wire [63:0] ALU64Result_MEM;
     wire [31:0] ReadData2_MEM;
+    wire HiWrite_MEM, LoWrite_MEM;
     
     EX_MEM_Reg Pipeline3(
     //Stage 4 Requirements (not used in subsequent stages)
@@ -227,6 +231,8 @@ module Top_Level_1(Clk, Rst);
     ALU64Result_EX,HiSrc_EX,LoSrc_EX,Link_EX,RegDst_EX, PC4_EX,
     MemToReg_MEM, RegWrite_MEM,
     ALU64Result_MEM,HiSrc_MEM,LoSrc_MEM,Link_MEM,RegDst_MEM, PC4_MEM,
+    HiWrite_EX, LoWrite_EX,
+    HiWrite_MEM, LoWrite_MEM,
     //Clock
     Clk
     );
@@ -251,6 +257,8 @@ module Top_Level_1(Clk, Rst);
     ALU64Result_MEM,HiSrc_MEM,LoSrc_MEM,Link_MEM,RegDst_MEM, PC4_MEM,
     MemToReg_WB, LoadData_WB, ALUResult_WB, RegWrite_WB,
     ALU64Result_WB,HiSrc_WB,LoSrc_WB,Link_WB,RegDst_WB, PC4_WB,
+    HiWrite_MEM, LoWrite_MEM,
+    HiWrite_WB, LoWrite_WB,
     //Clock
     Clk
     );
