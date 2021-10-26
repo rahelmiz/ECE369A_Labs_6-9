@@ -32,9 +32,11 @@ module Top_Level_1(Clk, Rst);
                         
     //STAGE 2
     //RegDst Mux
-    wire [1:0] RegDst_WB; //Used in stage 5
+    wire [4:0] RegDst_WB; //Used in stage 5
     wire [4:0] RegDstOut; //Input to register
-    Mux5bits_3x1 RegDstMux(RegDst_WB, Instruction_DEC[20:16], Instruction_DEC[15:11], 5'd31, 
+    wire [1:0] RegDst_DEC;
+    
+    Mux5bits_3x1 RegDstMux(RegDst_DEC, Instruction_DEC[20:16], Instruction_DEC[15:11], 5'd31, 
                            RegDstOut);
     //Link Mux
     (* mark_debug = "true" *) wire [31:0] WriteData_WB; //Write data from stage 5
@@ -46,7 +48,7 @@ module Top_Level_1(Clk, Rst);
     //Call Register File
     (* mark_debug = "true" *) wire RegWrite_WB; // RegWrite signal from write back stage
     wire [31:0] ReadData1_DEC, ReadData2_DEC;
-    RegisterFile Registers(Instruction_DEC[25:21], Instruction_DEC[20:16], RegDstOut, LinkOut, RegWrite_WB, 
+    RegisterFile Registers(Instruction_DEC[25:21], Instruction_DEC[20:16], RegDst_WB, LinkOut, RegWrite_WB, 
                           Clk, ReadData1_DEC, ReadData2_DEC); 
                           
     //HILO REGISTER STUFF
@@ -76,7 +78,7 @@ module Top_Level_1(Clk, Rst);
          LoSrc_DEC,	ZeroSrc_DEC, Move_DEC,	
          MoveSrc_DEC;
      //Two bit signals
-     wire[1:0] RegDst_DEC, bytes2Load_DEC, bytes2Store_DEC;
+     wire[1:0] bytes2Load_DEC, bytes2Store_DEC;
         
     Controller ControllerModule(Instruction_DEC[31:26], Instruction_DEC[5:0], Instruction_DEC[16],
                         RegDst_DEC,	Link_DEC, JrSrc_DEC, 
@@ -115,7 +117,7 @@ module Top_Level_1(Clk, Rst);
     wire MemRead_EX, MemWrite_EX;
     //STAGE 5
     wire MemToReg_EX, HiSrc_EX,LoSrc_EX,Link_EX;
-    wire[1:0] RegDst_EX;
+    wire[4:0] RegDst_EX;
     wire Jump_EX;
     
     
@@ -143,7 +145,7 @@ module Top_Level_1(Clk, Rst);
     MemRead_EX, MemWrite_EX,
     //Stage 5 Requirements that we need to carry through
     MemToReg_DEC,
-    HiSrc_DEC,LoSrc_DEC,Link_DEC,RegDst_DEC,
+    HiSrc_DEC,LoSrc_DEC,Link_DEC,RegDstOut,
     MemToReg_EX,
     HiSrc_EX,LoSrc_EX,Link_EX,RegDst_EX,
     //Clock
@@ -204,7 +206,7 @@ module Top_Level_1(Clk, Rst);
     wire MemRead_MEM, MemWrite_MEM;
     //Stage 4 + 5
     wire [31:0] ALUResult_MEM;
-    wire [1:0] RegDst_MEM;
+    wire [4:0] RegDst_MEM;
     wire MemToReg_MEM, RegWrite_MEM, HiSrc_MEM, LoSrc_MEM, Link_MEM;
     wire [31:0] PC4_MEM;
     wire [63:0] ALU64Result_MEM;
@@ -253,7 +255,7 @@ module Top_Level_1(Clk, Rst);
     Clk
     );
     
-    Mux32bits_2x1 WriteMux(MemToReg_WB, ALUResult_MEM, LoadData_MEM, WriteData_WB);
+    Mux32bits_2x1 WriteMux(MemToReg_WB, ALUResult_WB, LoadData_WB, WriteData_WB);
     
     
 endmodule

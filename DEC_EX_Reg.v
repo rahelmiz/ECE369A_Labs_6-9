@@ -94,14 +94,14 @@ module DEC_EX_Reg(
     //STAGE 5
     //Inputs
     input MemToRegIn,HiSrcIn,LoSrcIn,LinkIn;
-    input [1:0] RegDstIn;
+    input [4:0] RegDstIn;
     input Clk;
     //Outputs
     output reg MemToRegOut,HiSrcOut,LoSrcOut,LinkOut;
-    output reg [1:0] RegDstOut;
+    output reg [4:0] RegDstOut;
     //Memory declarations
     reg MemToReg,HiSrc,LoSrc,Link;
-    reg [1:0] RegDst;
+    reg [4:0] RegDst;
     
     //Initial state with NOOps
     initial begin

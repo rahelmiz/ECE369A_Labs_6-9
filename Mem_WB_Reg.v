@@ -32,18 +32,18 @@ module MEM_WB_Reg(
     input[31:0] LoadDataIn,ALUResultIn, PC4In;
     input[63:0] ALU64ResultIn;
     input MemToRegIn,RegWriteIn,HiSrcIn,LoSrcIn,LinkIn;
-    input [1:0] RegDstIn;
+    input [4:0] RegDstIn;
     input Clk;
     //Outputs
     output reg[31:0] LoadDataOut,ALUResultOut, PC4Out;
     output reg [63:0] ALU64ResultOut;
     output reg MemToRegOut,RegWriteOut,HiSrcOut,LoSrcOut,LinkOut;
-    output reg [1:0] RegDstOut;
+    output reg [4:0] RegDstOut;
     //Memory declarations
     reg[31:0] LoadData, ALUResult, PC4;
     reg[63:0] ALU64Result;
     reg MemToReg,RegWrite,HiSrc,LoSrc,Link;
-    reg [1:0] RegDst;
+    reg [4:0] RegDst;
     
     //Initial state with noops
     initial begin
