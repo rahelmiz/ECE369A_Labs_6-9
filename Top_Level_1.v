@@ -35,13 +35,13 @@ module Top_Level_1(Clk, Rst);
     wire [1:0] RegDst_WB; //Used in stage 5
     wire [4:0] RegDstOut; //Input to register
     Mux5bits_3x1 RegDstMux(RegDst_WB, Instruction_DEC[20:16], Instruction_DEC[15:11], 5'd31, 
-                            RegDstOut);
+                           RegDstOut);
     //Link Mux
     wire [31:0] WriteData_WB; //Write data from stage 5
     wire[31:0] PC4_WB; //PC + 4 from wb stage
     wire Link_WB; //Link signal from stage 5
     wire [31:0] LinkOut; //Output from link mux into write data
-    Mux32bits_2x1 WriteDataMux(Link_WB, WriteData_WB, PC4_DEC, LinkOut);
+    Mux32bits_2x1 WriteDataMux(Link_WB, WriteData_WB, PC4_WB, LinkOut);
     
     //Call Register File
     wire RegWrite_WB; // RegWrite signal from write back stage
@@ -85,7 +85,7 @@ module Top_Level_1(Clk, Rst);
                         ALUSrc2_DEC, RegWrite_DEC,	
                         HiWrite_DEC, LoWrite_DEC, HiSrc_DEC,
                         LoSrc_DEC,	ZeroSrc_DEC, Move_DEC,	
-                        MoveSrc_DEC, bytes2Load_DEC, bytes2store_DEC
+                        MoveSrc_DEC, bytes2Load_DEC, bytes2Store_DEC
                         );
     //ALU Control
     wire [4:0] ALUOp_DEC; //ALU Op in decode stage
@@ -119,10 +119,9 @@ module Top_Level_1(Clk, Rst);
     wire Jump_EX;
     
     
-    
     DEC_EX_Reg Pipeline2(
     //Stage 3 Requirements (not used in subsequent stages)
-    {27'b0,Instruction_DEC[10:6]},ReadData1_DEC,ReadData2_DEC,Immediate_DEC,{PC4_DEC[31:28], shifted_Jump},
+    {27'b0, Instruction_DEC[10:6]},ReadData1_DEC,ReadData2_DEC,Immediate_DEC,{PC4_DEC[31:28], shifted_Jump},
     {Hi_DEC, Lo_DEC},
     ALUSrc1_DEC, ALUSrc2_DEC,MoveSrc_DEC,ZeroSrc_DEC,JrSrc_DEC,
     Move_DEC,branch_DEC,
