@@ -48,7 +48,7 @@ module EX_MEM_Reg(
     //Ouputs
     output reg[1:0] bytes2LoadOut, bytes2StoreOut;
     output reg MemReadOut, MemWriteOut;
-    output[31:0] MemWriteDataOut;
+    output reg[31:0] MemWriteDataOut;
     //Memory
     reg[1:0] bytes2Load, bytes2Store;
     reg MemRead, MemWrite;
@@ -84,6 +84,7 @@ module EX_MEM_Reg(
     bytes2Store <= 0; //Comes from stage 2, goes through 3
     MemRead <= 0; //Comes from stage 2, goes through 3
     MemWrite <= 0; //Comes from stage 2, goes through 3
+    MemWriteData <= 0;
     //STAGE 4 + 5
     ALUResult <= 0; //Comes from stage 3, goes thru 4
     //STAGE 5
@@ -105,6 +106,7 @@ module EX_MEM_Reg(
     bytes2Store <= bytes2StoreIn; //Comes from stage 2, goes through 3
     MemRead <= MemReadIn; //Comes from stage 2, goes through 3
     MemWrite <= MemWriteIn; //Comes from stage 2, goes through 3
+    MemWriteData <= MemWriteDataIn;
     //STAGE 4 + 5
     ALUResult <= ALUResultIn; //Comes from stage 3, goes thru 4
     //STAGE 5
@@ -125,6 +127,7 @@ module EX_MEM_Reg(
     bytes2StoreOut <= bytes2Store; //Used when storing to memory
     MemReadOut <= MemRead; //Used when reading memory
     MemWriteOut <= MemWrite; //Used when writing/storing to memory
+    MemWriteDataOut <= MemWriteData;
     //STAGE 4 + 5
     ALUResultOut <= ALUResult; //Used when accessing memory address and for storing ALU Result into register
     //STAGE 5

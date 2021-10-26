@@ -26,5 +26,5 @@ module OR1bit(A,B,Out
     input A,B;
     output reg Out;
     
-    always @(*) Out <= A | B;
+    always @(*) Out <= A || B;
 endmodule

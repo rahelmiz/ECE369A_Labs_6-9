@@ -25,7 +25,7 @@ module Top_Level_1(Clk, Rst);
     PCAdder PC4Adder(.PCResult(PCResult), .PCAddResult(PC4_IF));
     
     //Instantiate Pipeline Register between IF and Decode stage
-    wire [31:0] Instruction_DEC, PC4_DEC; //Instruction and PC+4 used in DECODE stage
+    (* mark_debug = "true" *) wire [31:0] Instruction_DEC, PC4_DEC; //Instruction and PC+4 used in DECODE stage
     FE_DEC_Reg Pipeline1(.InstructionIn(Instruction_IF), .PC4In(PC4_IF),
                         .InstructionOut(Instruction_DEC), .PC4Out(PC4_DEC),
                         .Clk(Clk) );
@@ -37,16 +37,16 @@ module Top_Level_1(Clk, Rst);
     Mux5bits_3x1 RegDstMux(RegDst_WB, Instruction_DEC[20:16], Instruction_DEC[15:11], 5'd31, 
                            RegDstOut);
     //Link Mux
-    wire [31:0] WriteData_WB; //Write data from stage 5
+    (* mark_debug = "true" *) wire [31:0] WriteData_WB; //Write data from stage 5
     wire[31:0] PC4_WB; //PC + 4 from wb stage
     wire Link_WB; //Link signal from stage 5
     wire [31:0] LinkOut; //Output from link mux into write data
     Mux32bits_2x1 WriteDataMux(Link_WB, WriteData_WB, PC4_WB, LinkOut);
     
     //Call Register File
-    wire RegWrite_WB; // RegWrite signal from write back stage
+    (* mark_debug = "true" *) wire RegWrite_WB; // RegWrite signal from write back stage
     wire [31:0] ReadData1_DEC, ReadData2_DEC;
-    (* mark_debug = "true" *) RegisterFile Registers(Instruction_DEC[25:21], Instruction_DEC[20:16], RegDstOut, LinkOut, RegWrite_WB, 
+    RegisterFile Registers(Instruction_DEC[25:21], Instruction_DEC[20:16], RegDstOut, LinkOut, RegWrite_WB, 
                           Clk, ReadData1_DEC, ReadData2_DEC); 
                           
     //HILO REGISTER STUFF
@@ -160,7 +160,7 @@ module Top_Level_1(Clk, Rst);
     wire [31:0] ALUResult_EX;
     wire [63:0] ALU64Result_EX;
     wire Zero;
-    ALU32Bit THE_ALU(ALUOp_EX, ALUSrc1Output, ALUSrc2Ouptut, HiLo_EX, ALUResult_EX, Zero, ALU64Result_EX);
+    ALU32Bit THE_ALU(ALUOp_EX, ALUSrc1Output, ALUSrc2Output, HiLo_EX, ALUResult_EX, Zero, ALU64Result_EX);
     
     //Compute move condition
     //Check if GPR[rt] == 0
@@ -221,7 +221,7 @@ module Top_Level_1(Clk, Rst);
     ALUResult_EX,
     ALUResult_MEM,
     //Stage 5 Requirements that we need to carry through
-    MemToReg_EX, RegWrite_EX,
+    MemToReg_EX, trueRegWrite,
     ALU64Result_EX,HiSrc_EX,LoSrc_EX,Link_EX,RegDst_EX, PC4_EX,
     MemToReg_MEM, RegWrite_MEM,
     ALU64Result_MEM,HiSrc_MEM,LoSrc_MEM,Link_MEM,RegDst_MEM, PC4_MEM,

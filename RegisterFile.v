@@ -58,9 +58,15 @@ module RegisterFile(ReadRegister1, ReadRegister2, WriteRegister, WriteData, RegW
 	input Clk;
 	output reg [31:0] ReadData1;
 	output reg [31:0] ReadData2;
+	integer i;
 	
 	//Memory Declaraton
 	reg[31:0] Registers[31:0];
+	
+	initial begin
+	   for( i = 0; i < 32; i = i + 1) Registers[i] <= 0;
+	
+	end
 	   
 	//Read Process
 	always @(*)
@@ -72,7 +78,7 @@ module RegisterFile(ReadRegister1, ReadRegister2, WriteRegister, WriteData, RegW
 	//Write process
 	always @(posedge Clk)
 	begin
-	   if (RegWrite) begin
+	   if (RegWrite && (WriteRegister != 0)) begin
 	       Registers[WriteRegister] <= WriteData;
 	   end
 	end

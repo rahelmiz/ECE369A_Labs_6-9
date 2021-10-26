@@ -306,6 +306,16 @@ MoveSrc, bytes2load, bytes2store
             LoSrc <= 1'bX;	ZeroSrc <= 1'bX; Move<= 1'b0;	
             MoveSrc<=1'bX; bytes2load <= 2'd0; bytes2store<= 2'd0;
             end
+            
+            default: begin
+            RegDst <= 2'd0;	link <= 1'd0; jrSrc <= 1'b0; 
+            jump <= 1'b0; branch <= 1'b0; MemRead <=1'b0; 
+            MemtoReg<= 1'b0; MemWrite<= 1'b0; ALUsrc1 <= 1'b0; 
+            ALUsrc2 <= 1'b0; RegWrite <=1'b0;	
+            HiWrite <= 1'b0; LoWrite <= 1'b0; HiSrc <= 1'b0;
+            LoSrc <= 1'b0;	ZeroSrc <= 1'b0; Move<= 1'b0;	
+            MoveSrc<=1'b0; bytes2load <= 2'd0; bytes2store<= 2'd0;
+            end
   
         endcase
         end
@@ -564,14 +574,31 @@ MoveSrc, bytes2load, bytes2store
                 MoveSrc<=1'bX; bytes2load <= 2'd0; bytes2store<= 2'd0;
             end
             
-            
+            default: begin
+            RegDst <= 2'd0;	link <= 1'd0; jrSrc <= 1'b0; 
+            jump <= 1'b0; branch <= 1'b0; MemRead <=1'b0; 
+            MemtoReg<= 1'b0; MemWrite<= 1'b0; ALUsrc1 <= 1'b0; 
+            ALUsrc2 <= 1'b0; RegWrite <=1'b0;	
+            HiWrite <= 1'b0; LoWrite <= 1'b0; HiSrc <= 1'b0;
+            LoSrc <= 1'b0;	ZeroSrc <= 1'b0; Move<= 1'b0;	
+            MoveSrc<=1'b0; bytes2load <= 2'd0; bytes2store<= 2'd0;
+            end
             
             endcase
         
         
         end
-
-    endcase
+        default: begin
+            RegDst <= 2'd0;	link <= 1'd0; jrSrc <= 1'b0; 
+            jump <= 1'b0; branch <= 1'b0; MemRead <=1'b0; 
+            MemtoReg<= 1'b0; MemWrite<= 1'b0; ALUsrc1 <= 1'b0; 
+            ALUsrc2 <= 1'b0; RegWrite <=1'b0;	
+            HiWrite <= 1'b0; LoWrite <= 1'b0; HiSrc <= 1'b0;
+            LoSrc <= 1'b0;	ZeroSrc <= 1'b0; Move<= 1'b0;	
+            MoveSrc<=1'b0; bytes2load <= 2'd0; bytes2store<= 2'd0;
+        end
+        
+    endcase 
     
     end
     
