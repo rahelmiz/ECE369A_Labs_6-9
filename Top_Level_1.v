@@ -174,7 +174,7 @@ module Top_Level_1(Clk, Rst);
     AND1bit moveCheck(Move_EX, MoveMuxOutput, moveANDOutput);
     //Or gate
     wire trueRegWrite;
-    OR1bit WriteOR(moveANDOutput, RegWrite_EX, trueRegWrite); //This is what goes into further stages
+    OR1bit WriteOR(moveANDOutput, RegWrite_EX, trueRegWrite); //This is what goes into further stages FIXME
     
     //Branch instruction
     wire ZeroMuxOut;
@@ -235,9 +235,9 @@ module Top_Level_1(Clk, Rst);
     wire [31:0] MemReadData;
     wire [31:0] LoadData_MEM;
     
-    MaskStore StoreLogic(ALUResult_MEM, MemReadData, ReadData2_MEM , bytes2Store_MEM, StoreMaskOutput);
-    MaskLoad LoadLogic(ALUResult_MEM, MemReadData, bytes2Load_MEM, LoadData_MEM);
     DataMemory MemoryUnit(ALUResult_MEM, StoreMaskOutput, Clk, MemWrite_MEM, MemRead_MEM, MemReadData);
+    MaskStore StoreLogic(ALUResult_MEM[1:0], MemReadData, ReadData2_MEM , bytes2Store_MEM[1:0], StoreMaskOutput);
+    MaskLoad LoadLogic(ALUResult_MEM[1:0], MemReadData, bytes2Load_MEM[1:0], LoadData_MEM);
     
     //PIPELINE Stage 4-5
     wire [31:0] ALUResult_WB, LoadData_WB;
@@ -254,8 +254,6 @@ module Top_Level_1(Clk, Rst);
     );
     
     Mux32bits_2x1 WriteMux(MemToReg_WB, ALUResult_MEM, LoadData_MEM, WriteData_WB);
-    
-    
     
     
 endmodule
