@@ -10,6 +10,13 @@ module Top_Level_1(Clk, Rst);
     input Clk;
     input Rst;
     
+    output [6:0] out;
+    output [7:0] en_out;
+    
+    (* mark_debug = "true" *) wire[31:0] WriteData_WB;
+    wire clk_in;
+    ClkDiv clk1(clk_in, Rst, Clk);
+    Two4DigitDisplay t4dd(Clk, WriteData_WB, PCResult, out7, en_out);
     
     //BEGIN STAGE 1
     //Instruction memory
