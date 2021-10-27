@@ -8,9 +8,9 @@ module LoadHalf(MemAdr, MemData, Out_lh);
     always @ (*) begin
        case (MemAdr)
            1'b0: begin //write MemData[15:0] to register
-               Out_lh = { 16'b0, MemData[15:0]}; end
+               Out_lh = {{16{MemData[15]}}, MemData[15:0]}; end
            1'b1: begin //write MemData[31:16] to register
-               Out_lh = { 16'b0, MemData[31:16]}; end
+               Out_lh = { {16{MemData[31]}}, MemData[31:16]}; end
         endcase
     end
 endmodule
