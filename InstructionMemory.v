@@ -43,7 +43,7 @@ module InstructionMemory(Address, Instruction);
     reg[31:0] memory[1023:0]; //create a 1024-word memory.
     //initialize memory 
     initial begin
-        $readmemh("C:/Users/ruben/Documents/ECE369TestCases/InMem1Noop.mem", memory);
+        $readmemh("C:/Users/ruben/Documents/ECE369TestCases/InMem2Noop.mem", memory);
      end
      
      always @(Address)

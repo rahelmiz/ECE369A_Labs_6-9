@@ -75,7 +75,7 @@ module ALU32Bit(ALUControl, A, B, HiLo, ALUResult, Zero, ALU64Result);
                 ALU64Result = HiLo + ALU64Result; //Test because can mess up
                 end
             31: begin
-                ALU64Result <= $signed(A) * $signed(B); //multiply
+                ALU64Result = $signed(A) * $signed(B); //multiply
                 ALUResult = ALU64Result[31:0]; //multiply 
                 end
             default: ALUResult <= 0;
