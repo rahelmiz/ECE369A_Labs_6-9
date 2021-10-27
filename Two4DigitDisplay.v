@@ -117,4 +117,6 @@ module Two4DigitDisplay(Clk, NumberA, NumberB, out7, en_out);
         endcase
      end
      
+     
+    
 endmodule

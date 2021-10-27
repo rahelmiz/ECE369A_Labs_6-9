@@ -28,8 +28,8 @@ module Test1();
     initial begin
     Clk <= 0;
     Rst <= 1;
-    @(posedge Clk)
     #50 Rst <= 0;
+    @(posedge Clk);
     end
     
     always begin

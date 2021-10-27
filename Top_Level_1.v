@@ -5,18 +5,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Top_Level_1(Clk, Rst, out7, en_out);
+module Top_Level_1(Clk, Reset, out7, en_out);
     //Clock input
     input Clk;
-    input Rst;
-    
-    output [6:0] out;
+    input Reset;
+    wire ClkOut;
+    output [6:0] out7; //seg a, b, ... g
     output [7:0] en_out;
+
+    //Seven segment
+    ClkDiv ClkDiv_1(Clk, Reset, ClkOut);
+    Two4DigitDisplay Display_1(Clk, WriteData_WB[15:0], PCResult[15:0], out7, en_out);
     
-    (* mark_debug = "true" *) wire[31:0] WriteData_WB;
-    wire clk_in;
-    ClkDiv clk1(ClkIn, Rst, Clk);
-    Two4DigitDisplay t4dd(ClkIn, WriteData_WB, PCResult, out7, en_out);
+    
     
     //BEGIN STAGE 1
     //Instruction memory
@@ -25,7 +26,7 @@ module Top_Level_1(Clk, Rst, out7, en_out);
     (* mark_debug = "true" *) wire[31:0] PCResult; //Output of PC
     wire[31:0] Instruction_IF; //Instruction from first stage
     //ProgramCounter
-    ProgramCounter PCounter(.Address(PCInput), .PCResult(PCResult), .Reset(Rst), .Clk(Clk));
+    ProgramCounter PCounter(.Address(PCInput), .PCResult(PCResult), .Reset(Rst), .Clk(ClkOut));
     //InstructionMemory
     InstructionMemory Instructions(PCResult, Instruction_IF);
     //PCAdder/ PC + 4
@@ -35,7 +36,7 @@ module Top_Level_1(Clk, Rst, out7, en_out);
     (* mark_debug = "true" *) wire [31:0] Instruction_DEC, PC4_DEC; //Instruction and PC+4 used in DECODE stage
     FE_DEC_Reg Pipeline1(.InstructionIn(Instruction_IF), .PC4In(PC4_IF),
                         .InstructionOut(Instruction_DEC), .PC4Out(PC4_DEC),
-                        .Clk(Clk) );
+                        .Clk(ClkOut) );
                         
     //STAGE 2
     //RegDst Mux
@@ -56,7 +57,7 @@ module Top_Level_1(Clk, Rst, out7, en_out);
     (* mark_debug = "true" *) wire RegWrite_WB; // RegWrite signal from write back stage
     wire [31:0] ReadData1_DEC, ReadData2_DEC;
     RegisterFile Registers(Instruction_DEC[25:21], Instruction_DEC[20:16], RegDst_WB, LinkOut, RegWrite_WB, 
-                          Clk, ReadData1_DEC, ReadData2_DEC); 
+                          ClkOut, ReadData1_DEC, ReadData2_DEC); 
                           
     //HILO REGISTER STUFF
     wire[63:0] ALU64Result_WB; //ALU64 Result from stage 5
@@ -73,7 +74,7 @@ module Top_Level_1(Clk, Rst, out7, en_out);
     //LoSrc
     Mux32bits_2x1 LoSrcMux(LoSrc_WB, WriteData_WB, ALU64Result_WB[31:0], LoIn);
     //Instantiate HiLoRegister
-    HiLoRegisters HiLoRegister(HiIn, LoIn, HiWrite_WB, LoWrite_WB, Clk, Hi_DEC, Lo_DEC);
+    HiLoRegisters HiLoRegister(HiIn, LoIn, HiWrite_WB, LoWrite_WB, ClkOut, Hi_DEC, Lo_DEC);
     
     //CONTROLLER Signal
     //1 bit signals
@@ -162,7 +163,7 @@ module Top_Level_1(Clk, Rst, out7, en_out);
     HiWrite_DEC, LoWrite_DEC,
     HiWrite_EX, LoWrite_EX,
     //Clock
-    Clk
+    ClkOut
     );
     
     //STAGE 3 BEGIN
@@ -244,7 +245,7 @@ module Top_Level_1(Clk, Rst, out7, en_out);
     HiWrite_EX, LoWrite_EX,
     HiWrite_MEM, LoWrite_MEM,
     //Clock
-    Clk
+    ClkOut
     );
     
     //BEGIN Stage 4
@@ -253,7 +254,7 @@ module Top_Level_1(Clk, Rst, out7, en_out);
     wire [31:0] MemReadData;
     wire [31:0] LoadData_MEM;
     
-    DataMemory MemoryUnit(ALUResult_MEM, StoreMaskOutput, Clk, MemWrite_MEM, MemRead_MEM, MemReadData);
+    DataMemory MemoryUnit(ALUResult_MEM, StoreMaskOutput, ClkOut, MemWrite_MEM, MemRead_MEM, MemReadData);
     MaskStore StoreLogic(ALUResult_MEM[1:0], MemReadData, ReadData2_MEM , bytes2Store_MEM[1:0], StoreMaskOutput);
     MaskLoad LoadLogic(ALUResult_MEM[1:0], MemReadData, bytes2Load_MEM[1:0], LoadData_MEM);
     
@@ -270,7 +271,7 @@ module Top_Level_1(Clk, Rst, out7, en_out);
     HiWrite_MEM, LoWrite_MEM,
     HiWrite_WB, LoWrite_WB,
     //Clock
-    Clk
+    ClkOut
     );
     
     Mux32bits_2x1 WriteMux(MemToReg_WB, ALUResult_WB, LoadData_WB, WriteData_WB);
