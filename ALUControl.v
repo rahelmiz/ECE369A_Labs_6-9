@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 
-module ALUControl(Opcode, funct, I21,I6, I16, ALUOp);
+module ALUControl(Opcode, funct, I21,I6, I16, ALUOp, I9);
     input [5:0] Opcode;
     input [5:0] funct; 
-    input I21, I6, I16;                                     
+    input I21, I6, I16, I9;                                     
     output reg [4:0] ALUOp;
     always @(*) begin
     //first check for the special cases
@@ -65,6 +65,16 @@ module ALUControl(Opcode, funct, I21,I6, I16, ALUOp);
             1'b1:  ALUOp <= 5'd18; //BGEZ
         endcase
      end // end special case
+     
+     //SEB and SEH
+     else if (Opcode == 6'b011111) begin
+        case(I9)
+        1'b0:  ALUOp <= 5'd19; //BLTZ
+        1'b1:  ALUOp <= 5'd20; //BGEZ
+        default: ALUOp <= 0;
+        
+        endcase
+     end
      
      //BEGIN STANDARD ITYPE CASES 
      else begin

@@ -87,12 +87,15 @@ module Top_Level_1(Clk, Rst);
                         ALUSrc2_DEC, RegWrite_DEC,	
                         HiWrite_DEC, LoWrite_DEC, HiSrc_DEC,
                         LoSrc_DEC,	ZeroSrc_DEC, Move_DEC,	
-                        MoveSrc_DEC, bytes2Load_DEC, bytes2Store_DEC
+                        MoveSrc_DEC, bytes2Load_DEC, bytes2Store_DEC,
+                        Instruction_DEC[9]
                         );
     //ALU Control
     wire [4:0] ALUOp_DEC; //ALU Op in decode stage
     ALUControl ALUController(Instruction_DEC[31:26], Instruction_DEC[5:0], 
-                            Instruction_DEC[21],Instruction_DEC[6], Instruction_DEC[16], ALUOp_DEC);
+                            Instruction_DEC[21],Instruction_DEC[6], Instruction_DEC[16], ALUOp_DEC,
+                            Instruction_DEC[9]
+                            );
     
     //SignExtend Immediate
     wire [31:0] Immediate_DEC;

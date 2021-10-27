@@ -27,11 +27,13 @@ MemtoReg, MemWrite, ALUsrc1,
 ALUsrc2, RegWrite,	
 HiWrite, LoWrite, HiSrc,
 LoSrc,	ZeroSrc, Move,	
-MoveSrc, bytes2load, bytes2store
+MoveSrc, bytes2load, bytes2store,
+i9
 );
     //Inputs
     input [5:0] opcode, funct;
     input i16;
+    input i9;
     output reg link, jrSrc, 
     jump, branch, MemRead, 
     MemtoReg, MemWrite, ALUsrc1, 
@@ -588,6 +590,45 @@ MoveSrc, bytes2load, bytes2store
         
         
         end
+        
+        //SEH and SEB
+        6'b011111: begin
+            case(i9)
+                1'b1: begin 
+                RegDst <= 2'd1;	link <= 1'd0; jrSrc <= 1'b0; 
+                jump <= 1'b0; branch <= 1'b0; MemRead <=1'b0; 
+                MemtoReg<= 1'b0; MemWrite<= 1'b0; ALUsrc1 <= 1'b0; 
+                ALUsrc2 <= 1'b0; RegWrite <=1'b1;	
+                HiWrite <= 1'b0; LoWrite <= 1'b0; HiSrc <= 1'bX;
+                LoSrc <= 1'bX;	ZeroSrc <= 1'bX; Move<= 1'b0;	
+                MoveSrc<=1'bX; bytes2load <= 2'd0; bytes2store<= 2'd0;
+                end
+            
+                1'b0: begin 
+                RegDst <= 2'd1;	link <= 1'd0; jrSrc <= 1'b0; 
+                jump <= 1'b0; branch <= 1'b0; MemRead <=1'b0; 
+                MemtoReg<= 1'b0; MemWrite<= 1'b0; ALUsrc1 <= 1'b0; 
+                ALUsrc2 <= 1'b0; RegWrite <=1'b1;	
+                HiWrite <= 1'b0; LoWrite <= 1'b0; HiSrc <= 1'bX;
+                LoSrc <= 1'bX;	ZeroSrc <= 1'bX; Move<= 1'b0;	
+                MoveSrc<=1'bX; bytes2load <= 2'd0; bytes2store<= 2'd0;
+                end
+            
+                default: begin
+                RegDst <= 2'd0;	link <= 1'd0; jrSrc <= 1'b0; 
+                jump <= 1'b0; branch <= 1'b0; MemRead <=1'b0; 
+                MemtoReg<= 1'b0; MemWrite<= 1'b0; ALUsrc1 <= 1'b0; 
+                ALUsrc2 <= 1'b0; RegWrite <=1'b0;	
+                HiWrite <= 1'b0; LoWrite <= 1'b0; HiSrc <= 1'b0;
+                LoSrc <= 1'b0;	ZeroSrc <= 1'b0; Move<= 1'b0;	
+                MoveSrc<=1'b0; bytes2load <= 2'd0; bytes2store<= 2'd0;
+                end
+            
+            endcase
+        
+        
+        end
+        
         default: begin
             RegDst <= 2'd0;	link <= 1'd0; jrSrc <= 1'b0; 
             jump <= 1'b0; branch <= 1'b0; MemRead <=1'b0; 

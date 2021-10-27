@@ -62,6 +62,8 @@ module ALU32Bit(ALUControl, A, B, HiLo, ALUResult, Zero, ALU64Result);
             16: ALUResult <= A; //Move A elsewhere
             17: ALUResult <= B << 16; //Load upper immediate
             18: ALUResult <= A < 0 ? 1 : 0;
+            19: ALUResult <= {{24{B[7]}},  B[7:0]}; // SEB
+            20: ALUResult <= {{16{B[15]}},  B[15:0]}; // SEH
             //16: ALUResult <= -1; //error ?FIXME?
             26: ALU64Result <= $unsigned(A) * $unsigned(B); //Unsigned Mult MULTU
             27: ALUResult <= HiLo[31:0]; //Move from Lo
