@@ -5,7 +5,7 @@
 // beq = 6'd5
 
 module HazardDetection(    
-    IFID_Rs, IFID_Rt, 
+    IFID_Rs, IFID_Rt, //separate stages on sepeare lines , and registers are alphabetically aranged
     IDEX_Rt, IDEX_Rd, IDEX_MemRead, IDEX_RegWrite,
     EXMEM_Rd, EXMEM_Rt, EXMEM_MemRead, EX_MEM_RegWrite,
     MEMWB_Rd, MEMWB_Rt, MEMWB_MemRead,  MEMWB_RegWrite, 
