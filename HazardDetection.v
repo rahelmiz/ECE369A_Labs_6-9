@@ -5,14 +5,25 @@
 // beq = 6'd5
 
 module HazardDetection(    
-    IDEX_MemRead, IDEX_RegWrite, EX_MEM_RegWrite, MEMWB_RegWrite, //inputs
-    IFID_Rs, IFID_Rt, IDEX_Rt, IDEX_Rd, IFID_Rs, IFID_Rt, EXMEM_Rd, MEMWB_Rd, Op, jump, branch, //inputs
+    IFID_Rs, IFID_Rt, 
+    IDEX_Rt, IDEX_Rd, IDEX_MemRead, IDEX_RegWrite,
+    EXMEM_Rd, EXMEM_Rt, EXMEM_MemRead, EX_MEM_RegWrite,
+    MEMWB_Rd, MEMWB_Rt, MEMWB_MemRead,  MEMWB_RegWrite, 
+    Op, jump, branch,  //inputs
     stall_IDEX, stall_EX_MEM, stall_MEMWB, //outputs
     IFID_Write, PCWrite, IF_Flush 
     );
     
-    input IDEX_MemRead, IDEX_RegWrite, EX_MEM_RegWrite, MEMWB_RegWrite;
-    input [4:0] IFID_Rs, IFID_Rt, IDEX_Rt, IDEX_Rd, IFID_Rs, IFID_Rt, EXMEM_Rd, MEMWB_Rd;
+    input IDEX_MemRead, IDEX_RegWrite,
+    EXMEM_MemRead, EX_MEM_RegWrite,
+    MEMWB_MemRead,  MEMWB_RegWrite;
+    
+    input [4:0] IFID_Rs, IFID_Rt,
+    IDEX_Rd, IDEX_Rt, 
+    EXMEM_Rd, EXMEM_Rt, 
+    MEMWB_Rd, MEMWB_Rt; 
+    
+    
     input [5:0] Op;
     input  jump, branch;
     output reg stall_IDEX, stall_EX_MEM, stall_MEMWB; // 1 to stall/insert zeros
@@ -67,9 +78,28 @@ module HazardDetection(
     
     //RAHEL'S CASES BEGIN
     //lw followed by jump
-    if (jump == 1 &&  IFID_Rs == IDEX_Rt) begin
-        
+    if (jump == 1 && IDEX_MemRead == 1 &&  IFID_Rs == IDEX_Rt) begin
+        stall_IDEX = 1;
+        stall_EX_MEM = 0;
+        stall_MEMWB = 0;
+        IFID_Write = 0; PCWrite = 0; IF_Flush = 0;
     end
+    // F    EX   MEM
+    //JUMP NOP   LW 
+    else if (jump == 1 && EXMEM_MemRead == 1 &&  IFID_Rs == EXMEM_Rt) begin 
+        stall_IDEX = 1; // DO WE ZERO THIS OUT?
+        stall_EX_MEM = 1;
+        stall_MEMWB = 0;
+        IFID_Write = 0; PCWrite = 0; IF_Flush = 0;
+    end
+    
+    else if (jump == 1 && MEMWB_MemRead == 1 &&  IFID_Rs == MEMWB_Rt) begin 
+        stall_IDEX = 1; // DO WE ZERO THIS OUT?
+        stall_EX_MEM = 1; // DO WE ZERO THIS OUT?
+        stall_MEMWB = 1; 
+        IFID_Write = 0; PCWrite = 0; IF_Flush = 0;
+    end
+        
     //RAHEL'S CASES END
     end
 endmodule
